@@ -20,6 +20,7 @@ export default function LoginPage() {
   const [buttonDisabled, setButtonDisabled] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false)
 
   useEffect(() => {
     if (email.length > 0 && password.length > 0) {
@@ -53,6 +54,21 @@ export default function LoginPage() {
       });
   };
 
+  const handleForgetPassword = async() => {
+    if(!email) {
+      toast.error("Please enter your email");
+      return;
+    }
+    const res = await axios.post("/api/users/generateresetemail", { email })
+    if (res.data.success) {
+      toast.success("Password reset email sent successfully");
+      setShowPassword(true);
+    } else {
+      toast.error(res.data.error || "Failed to send password reset email");
+    }
+  };
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
 
@@ -64,6 +80,12 @@ export default function LoginPage() {
           
         </CardHeader>
         <CardContent>
+
+          {showPassword && (
+            <div className="text-center text-sm text-blue-500 cursor-pointer">
+              <p>Check your email for password reset link</p>
+            </div>
+          )}
 
           {error && <p className="text-red-500 text-center">{error}</p>}
 
@@ -94,7 +116,8 @@ export default function LoginPage() {
               <Button type="submit" className="w-full mt-4" disabled={buttonDisabled}>
                 {loading ? "Logging in..." : "Login"}
               </Button>
-              <p className="text-center text-sm">don't have account. <Link href={"/signup"}>
+              <p onClick={handleForgetPassword} className="text-center text-sm text-blue-500 cursor-pointer">forgot password</p>
+              <p  className="text-center text-sm">don't have account. <Link href={"/signup"}>
               <span className="text-blue-500 cursor-pointer">Signup</span> </Link></p>
             </div>
           </form>

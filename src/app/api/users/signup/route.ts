@@ -2,6 +2,8 @@ import connectDb from "@/db/dbConfig";
 import User from "@/models/user.models";
 import { NextRequest, NextResponse } from "next/server";
 import bcryptjs from "bcryptjs";
+import { sendEmail } from "@/helpers/mailer";
+
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,7 +13,6 @@ export async function POST(request: NextRequest) {
     const reqBody = await request.json();
     const { username, email, password } = reqBody;
 
-    console.log(username, email, password);
     if (!username || !email || !password) {
       return NextResponse.json(
         { error: "Please fill all fields" },
@@ -34,12 +35,25 @@ export async function POST(request: NextRequest) {
       password: hashedPassword,
     });
 
-    const result = await newUser.save();
+    const savedUser = await newUser.save();
+
+    // Send verification email
+
+    sendEmail({
+      email,
+      emailType: "VERIFY",
+      userId: savedUser._id,
+    });
+    // Send response
     return NextResponse.json(
       {
-        message: "User created successfully",
+        message: "User created successfully and verification email sent to your email",
         success: true,
-        result,
+        user: {
+          id: savedUser._id,
+          username: savedUser.username,
+          email: savedUser.email,
+        }
       },
       { status: 201 }
     );

@@ -1,5 +1,7 @@
 "use client";
 
+import { Button, buttonVariants } from "@/components/ui/button";
+import { sendEmail } from "@/helpers/mailer";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -7,6 +9,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 type User = {
+  isVerified: any;
   _id: string;
   username: string;
   email: string;
@@ -37,6 +40,7 @@ export default  function ProfilePage() {
     fetchUser();
   },[]);
 
+ const handleVerifyEmail = async () => {}
 
 
   if (!user) {
@@ -47,8 +51,6 @@ export default  function ProfilePage() {
     );
   }
 
-
-console.log(user);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-blue-900 via-purple-900 to-black">
@@ -72,6 +74,17 @@ console.log(user);
         <p className="text-center text-white/80 mb-6">
           Manage your profile settings
         </p>
+
+        {
+          user?.isVerified ? <span className='text-green-500 py-3'>Verified</span> : <span className='text-red-500 mb-3'>your account is not Verified</span>
+        }
+
+        {
+          !user?.isVerified  && <Button onClick={handleVerifyEmail}>Verify Email</Button>
+        }
+
+
+
         <form className="space-y-4 w-full">
           <div>
             <label

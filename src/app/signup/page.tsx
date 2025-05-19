@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { toast } from "react-hot-toast";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -21,20 +21,24 @@ export default function SignupPage() {
     email: "",
     password: "",
   });
-
   const onSignup = async () => {
     try {
       setLoading(true);
       const response = await axios.post("/api/users/signup", user);
       console.log("Signup response:", response.data);
+      
       if (response.data.success) {
+        toast.success("Account created successfully! Please check your email to verify your account.");
         router.push("/login");
       } else {
         setError(response.data.error || "Signup failed. Please try again.");
+        toast.error(response.data.error || "Signup failed. Please try again.");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error during signup:", error);
-      setError("An error occurred during signup. Please try again.");
+      const errorMessage = error.response?.data?.error || "An error occurred during signup. Please try again.";
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
