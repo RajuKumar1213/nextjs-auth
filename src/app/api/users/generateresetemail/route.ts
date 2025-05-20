@@ -25,15 +25,25 @@ export async function POST(request: NextRequest) {
             userId: user._id,
         })
 
-        return new Response(
-            JSON.stringify({
-                message: "Password reset email sent successfully",
+        return NextResponse.json(
+            {
+                message: "Reset password email sent successfully",
                 success: true,
-            }),
+            },
             { status: 200 }
         );
 
-    } catch (error) {
-        throw new Error("Error in reset password");
+    } catch (error: unknown) {
+        let errorMessage = "Error in reset password";
+        if (error instanceof Error) {
+            errorMessage = error.message;
+        }
+        return NextResponse.json(
+            {
+                message: errorMessage,
+                success: false,
+            },
+            { status: 500 }
+        );
     }
 }

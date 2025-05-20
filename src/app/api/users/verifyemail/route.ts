@@ -33,7 +33,11 @@ export async function POST(request: NextRequest) {
       { message: "Email verified successfully", success: true },
       { status: 200 }
     );
-  } catch (error: any) {
-    return NextResponse.json({ message: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    let errorMessage = "Unknown error";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

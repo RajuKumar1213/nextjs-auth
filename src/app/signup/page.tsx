@@ -26,17 +26,22 @@ export default function SignupPage() {
       setLoading(true);
       const response = await axios.post("/api/users/signup", user);
       console.log("Signup response:", response.data);
-      
+
       if (response.data.success) {
-        toast.success("Account created successfully! Please check your email to verify your account.");
+        toast.success(
+          "Account created successfully! Please check your email to verify your account."
+        );
         router.push("/login");
       } else {
         setError(response.data.error || "Signup failed. Please try again.");
         toast.error(response.data.error || "Signup failed. Please try again.");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error during signup:", error);
-      const errorMessage = error.response?.data?.error || "An error occurred during signup. Please try again.";
+      let errorMessage = "An error occurred during signup. Please try again.";
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       setError(errorMessage);
       toast.error(errorMessage);
     } finally {
@@ -56,11 +61,7 @@ export default function SignupPage() {
     }
   }, [user]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Form submitted:", user);
-    // Here, you’ll connect to your API
-  };
+
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
@@ -68,6 +69,10 @@ export default function SignupPage() {
         <CardHeader>
           <CardTitle className="text-center text-2xl">Signup</CardTitle>
         </CardHeader>
+
+        {error && (
+          <div className="text-red-500 text-sm text-center mb-4">{error}</div>
+        )}
 
         <CardContent>
           {" "}

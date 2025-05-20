@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
-export async function GET(response: NextResponse) {
+export async function GET() {
   try {
     const response = NextResponse.json({
-      message: "Logout successful",
+      message: "Logged out successfully",
       success: true,
     });
 
@@ -13,7 +13,11 @@ export async function GET(response: NextResponse) {
     });
 
     return response;
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  } catch (error: unknown) {
+    let errorMessage = "Unknown error";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

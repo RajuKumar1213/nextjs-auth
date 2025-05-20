@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState } from "react";
-import { ModeToggle } from "@/components/darkmode-toggle-button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -45,9 +44,13 @@ export default function LoginPage() {
           toast.error(response.data.error || "Login failed. Please try again.");
         }
       })
-      .catch((error:any) => {
+      .catch((error: unknown) => {
         console.error("Error during login:", error);
-        setError(error.response?.data?.error || "An error occurred during login. Please try again.");
+        let errorMessage = "An error occurred during login. Please try again.";
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        }
+        setError(errorMessage);
       })
       .finally(() => {
         setLoading(false);
@@ -117,7 +120,7 @@ export default function LoginPage() {
                 {loading ? "Logging in..." : "Login"}
               </Button>
               <p onClick={handleForgetPassword} className="text-center text-sm text-blue-500 cursor-pointer">forgot password</p>
-              <p  className="text-center text-sm">don't have account. <Link href={"/signup"}>
+              <p  className="text-center text-sm">don&apos;t have account. <Link href={"/signup"}>
               <span className="text-blue-500 cursor-pointer">Signup</span> </Link></p>
             </div>
           </form>

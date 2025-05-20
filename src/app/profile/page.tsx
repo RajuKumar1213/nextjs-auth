@@ -1,7 +1,6 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
-import { sendEmail } from "@/helpers/mailer";
+import { Button } from "@/components/ui/button";
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,7 +8,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 type User = {
-  isVerified: any;
+  isVerified: boolean;
   _id: string;
   username: string;
   email: string;

@@ -53,10 +53,11 @@ export async function POST(request: NextRequest) {
 
     return response;
 
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (error: unknown) {
+    let errorMessage = "Internal server error";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    return NextResponse.json({ message: errorMessage }, { status: 500 });
   }
 }

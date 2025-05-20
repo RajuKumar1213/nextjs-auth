@@ -3,7 +3,13 @@ import User from "@/models/user.models";
 import bcryptjs from "bcryptjs";
 import { NextResponse } from "next/server";
 
-export const sendEmail = async ({ email, emailType, userId }: any) => {
+interface SendEmailParams {
+  email: string;
+  emailType: "VERIFY" | "RESET";
+  userId: string;
+}
+
+export const sendEmail = async ({ email, emailType, userId }: SendEmailParams) => {
   try {
     // create a hashtoken
     const hashedToken = await bcryptjs.hash(userId.toString(), 10);
@@ -53,7 +59,11 @@ export const sendEmail = async ({ email, emailType, userId }: any) => {
       },
       { status: 200 }
     );
-  } catch (error: any) {
-    throw new Error(error.message);
+  } catch (error: unknown) {
+    let errorMessage = "Error in sending email";
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    }
+    throw new Error(errorMessage);
   }
 };

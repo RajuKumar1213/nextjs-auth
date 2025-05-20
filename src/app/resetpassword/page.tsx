@@ -38,8 +38,12 @@ export default function ResetPasswordPage() {
             } else {
                 toast.error(response.data.message || "Failed to reset password");
             }
-        } catch (error: any) {
-            setError(error.response?.data?.message || "An error occurred while resetting the password");
+        } catch (error: unknown) {
+            let errorMessage = "An error occurred while resetting the password";
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            setError(errorMessage);
         } finally {
             setLoading(false);
         }
@@ -49,6 +53,7 @@ export default function ResetPasswordPage() {
     return (
         <div className="flex flex-col items-center justify-center min-h-screen py-2">
             <h2 className="text-red-500">{data.confirmPassword !== data.password && "Passwords do not match. Password and confirm password must be the same."}</h2>
+            {error && <h2 className="text-red-500">{error}</h2>}
             <h1 className="text-2xl font-bold">Reset Password</h1>
             <p className="mt-4 text-gray-600">Please enter your new password.</p>
             <form className="mt-6 space-y-4">
